@@ -174,7 +174,7 @@ func (m *LuceneToCardinalMapper) MapMessageTerm(msgTermCtx luceneparser.IMessage
 	filter := &core.Filter{
 		K:         "_cardinalhq.message",
 		V:         []string{value},
-		Op:        core.OP_CONTAINS,
+		Op:        core.OP_REGEX,
 		Extracted: false,
 		Computed:  false,
 		DataType:  core.DATA_TYPE_STRING,
