@@ -15,6 +15,21 @@ func NewLuceneToCardinalMapper() *LuceneToCardinalMapper {
 	return &LuceneToCardinalMapper{}
 }
 
+func (m *LuceneToCardinalMapper) MapQueryToAPIFormat(queryCtx luceneparser.IQueryContext) map[string]any {
+	baseExpr := m.MapQuery(queryCtx)
+	if baseExpr == nil {
+		return nil
+	}
+
+	result := map[string]any{
+		"baseExpressions": map[string]any{
+			"a": baseExpr.ToJsonObj(),
+		},
+	}
+
+	return result
+}
+
 // Lucene query to Cardinal BaseExpr
 func (m *LuceneToCardinalMapper) MapQuery(queryCtx luceneparser.IQueryContext) *core.BaseExpr {
 	if queryCtx == nil {

@@ -3,6 +3,9 @@ package lucene
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/antlr4-go/antlr/v4"
+	luceneparser "github.com/cardinalhq/cardinal-ast/parsers/lucene/grammar"
 )
 
 func ConvertLuceneToJSONDSL(luceneQuery string) (string, error) {
@@ -38,4 +41,24 @@ func ConvertLuceneToJSONDSLMap(luceneQuery string) (map[string]interface{}, erro
 
 	jsonObj := baseExpr.ToJsonObj()
 	return jsonObj, nil
+}
+
+func ConvertLuceneToAPIFormat(luceneQuery string) (map[string]any, error) {
+	input := antlr.NewInputStream(luceneQuery)
+
+	lexer := luceneparser.NewLuceneQueryLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+
+	parser := luceneparser.NewLuceneQueryParser(stream)
+
+	tree := parser.Query()
+
+	mapper := NewLuceneToCardinalMapper()
+	result := mapper.MapQueryToAPIFormat(tree)
+
+	if result == nil {
+		return nil, fmt.Errorf("failed to parse query: no result generated")
+	}
+
+	return result, nil
 }
