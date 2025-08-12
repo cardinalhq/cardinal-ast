@@ -98,6 +98,11 @@ func (m *LuceneToCardinalMapper) MapExpression(exprCtx luceneparser.IExpressionC
 		}
 	}
 
+	if len(exprCtx.AllExpression()) == 1 {
+		// This is a single expression, likely wrapped in parentheses
+		return m.MapExpression(exprCtx.Expression(0))
+	}
+
 	// k:v pair
 	if exprCtx.FieldExpression() != nil {
 		return m.MapFieldExpression(exprCtx.FieldExpression())
