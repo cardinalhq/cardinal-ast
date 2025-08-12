@@ -43,7 +43,7 @@ func ConvertLuceneToJSONDSLMap(luceneQuery string) (map[string]interface{}, erro
 	return jsonObj, nil
 }
 
-func ConvertLuceneToAPIFormat(luceneQuery string) (map[string]any, error) {
+func ConvertLuceneToAPIFormat(luceneQuery string, limit *int, order *string) (map[string]any, error) {
 	input := antlr.NewInputStream(luceneQuery)
 
 	lexer := luceneparser.NewLuceneQueryLexer(input)
@@ -54,7 +54,7 @@ func ConvertLuceneToAPIFormat(luceneQuery string) (map[string]any, error) {
 	tree := parser.Query()
 
 	mapper := NewLuceneToCardinalMapper()
-	result := mapper.MapQueryToAPIFormat(tree)
+	result := mapper.MapQueryToAPIFormat(tree, limit, order)
 
 	if result == nil {
 		return nil, fmt.Errorf("failed to parse query: no result generated")

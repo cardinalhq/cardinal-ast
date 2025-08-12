@@ -15,10 +15,24 @@ func NewLuceneToCardinalMapper() *LuceneToCardinalMapper {
 	return &LuceneToCardinalMapper{}
 }
 
-func (m *LuceneToCardinalMapper) MapQueryToAPIFormat(queryCtx luceneparser.IQueryContext) map[string]any {
+func (m *LuceneToCardinalMapper) MapQueryToAPIFormat(queryCtx luceneparser.IQueryContext, limit *int, order *string) map[string]any {
 	baseExpr := m.MapQuery(queryCtx)
 	if baseExpr == nil {
 		return nil
+	}
+
+	if limit != nil {
+		baseExpr.Limit = limit
+	} else if baseExpr.Limit == nil {
+		defaultLimit := 1000
+		baseExpr.Limit = &defaultLimit
+	}
+
+	if order != nil {
+		baseExpr.Order = order
+	} else if baseExpr.Order == nil {
+		defaultOrder := "DESC"
+		baseExpr.Order = &defaultOrder
 	}
 
 	result := map[string]any{
