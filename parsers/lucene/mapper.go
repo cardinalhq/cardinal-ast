@@ -186,6 +186,26 @@ func (m *LuceneToCardinalMapper) BuildFieldName(fieldCtx luceneparser.IFieldCont
 		fieldName += "." + identifiers[i].GetText()
 	}
 
+	return m.MapFieldName(fieldName)
+}
+
+func (m *LuceneToCardinalMapper) MapFieldName(fieldName string) string {
+	fieldMappings := map[string]string{
+		"service":   "resource.service.name",
+		"level":     "_cardinalhq.level",
+		"message":   "_cardinalhq.message",
+		"app":       "resource.service.name",
+		"pod":       "resource.k8s.pod.name",
+		"namespace": "resource.k8s.namespace.name",
+		"container": "resource.k8s.container.name",
+		"node":      "resource.k8s.node.name",
+		"cluster":   "resource.k8s.cluster.name",
+	}
+
+	if mapped, exists := fieldMappings[fieldName]; exists {
+		return mapped
+	}
+
 	return fieldName
 }
 
